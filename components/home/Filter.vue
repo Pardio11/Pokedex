@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, defineEmits } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const emit = defineEmits<{
     (e: 'callSort', parameter: number): void;

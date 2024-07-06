@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 const props = defineProps(['pokemon']);
 const pokemon = computed(() => props.pokemon);
