@@ -51,7 +51,7 @@ watch(pokemon, (newPokemon, oldPokemon) => {
 <template>
     <div class="flex col card" tabindex="0">
         <div class="flex center imgContainer">
-            <NuxtImg class="pokemonImg"
+            <img class="pokemonImg"
                 src="https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/detail/002.png" />
         </div>
         <h6 class="number">#{{ number }}</h6>
