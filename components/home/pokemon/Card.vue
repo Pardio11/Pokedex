@@ -18,6 +18,7 @@ const fetchPokemonData = async () => {
         const data = await response.json();
         pokemonData.value = data;
         pokemonTypes.value = data.types;
+        console.log(pokemonData.value.sprites.front_default)
     } catch (err) {
         error.value = 'Error fetching data: ' + (err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -33,8 +34,9 @@ const number = computed(() => {
 });
 
 const imgPokemon = computed(() => {
-    return pokemonData.value.sprites.front_default
+
     if (pokemonData.value && pokemonData.value.id) {
+        return pokemonData.value.sprites.front_default
         return "https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/detail/" + String(pokemonData.value.id).padStart(3, '0') + ".png";
     }
     return '';
