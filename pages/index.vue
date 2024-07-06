@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
-const MAX_POKEMON = 1025;
-
 const pokemonList = ref<any | null>([]);
 const allPokemonList = ref<any[]>([]);
+const pendingPokemonList = ref<any[]>([]);
 const isLoading = ref(false);
 const invert = ref<boolean>(false);
 const error = ref<string | null>(null);
-const next = ref<string | null>(null);
 
-const fetchPokemonData = async (url: string, reset: boolean, order = "") => {
+const fetchPokemonData = async (url: string) => {
     try {
-        if (pokemonList.value.length === 0 || reset) {
-            isLoading.value = true; // Set isLoading to true only if pokemonList.value is empty
-        }
+
+        isLoading.value = true;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -22,50 +19,38 @@ const fetchPokemonData = async (url: string, reset: boolean, order = "") => {
         }
         const data = await response.json();
 
-        if (reset) {
-            pokemonList.value = [];
-        }
-
-        if (invert.value === true) {
-            pokemonList.value.push(...data.results.reverse());
-            next.value = data.previous;
-        } else {
-            pokemonList.value.push(...data.results);
-            next.value = data.next;
-            if (next.value !== null) {
-                const urlParams = new URLSearchParams(new URL(next.value).search);
-                const currentOffset = parseInt(urlParams.get('offset') || '0');
-                const limit = parseInt(urlParams.get('limit') || '20');
-                const newLimit = calculateNextOffset(currentOffset, limit);
-
-                if (limit !== newLimit) {
-                    next.value = `https://pokeapi.co/api/v2/pokemon?offset=${currentOffset}&limit=${newLimit}`;
-                    if (newLimit <= 0) {
-                        next.value = null;
-                    }
-                }
-            }
-        }
-
-        if (order === "A-Z") {
-            pokemonList.value.sort((a: any, b: any) => a.name.localeCompare(b.name));
-            next.value = 'add';
-        }
-
-        if (order === "Z-A") {
-            pokemonList.value.sort((a: any, b: any) => b.name.localeCompare(a.name));
-            next.value = 'add';
-        }
-        if (order === "mix") {
-            shuffleArray(pokemonList.value);
-            next.value = 'add';
-        }
-
+        allPokemonList.value.push(...data.results);
+        pendingPokemonList.value = [...allPokemonList.value];
+        pokemonList.value = pendingPokemonList.value.splice(0, 20);
     } catch (err) {
         error.value = 'Error fetching data: ' + (err instanceof Error ? err.message : 'Unknown error');
     } finally {
-        isLoading.value = false; // Set isLoading to false after the fetch operation completes
+        isLoading.value = false;
     }
+};
+
+const editPokemonList = (reset: boolean, order = "") => {
+    console.log(allPokemonList.value)
+    if (reset) {
+        pendingPokemonList.value = [...allPokemonList.value];
+        pokemonList.value = [];
+    }
+
+    if (invert.value === true) {
+        pendingPokemonList.value.reverse();
+    }
+
+    if (order === "A-Z") {
+        pendingPokemonList.value.sort((a: any, b: any) => a.name.localeCompare(b.name));
+    }
+
+    if (order === "Z-A") {
+        pendingPokemonList.value.sort((a: any, b: any) => b.name.localeCompare(a.name));
+    }
+    if (order === "mix") {
+        shuffleArray(pendingPokemonList.value);
+    }
+    pokemonList.value = pendingPokemonList.value.splice(0, 20);
 };
 
 const shuffleArray = (array: any[]) => {
@@ -74,55 +59,38 @@ const shuffleArray = (array: any[]) => {
         [array[i], array[j]] = [array[j], array[i]];
     }
 };
-const sort = async (value: number) => {
+
+const sort = (value: number) => {
     console.log(value);
     if (value == 1) {
-        fetchPokemonData('https://pokeapi.co/api/v2/pokemon', true);
         invert.value = false;
+        editPokemonList(true);
     }
     if (value == 2) {
-        fetchPokemonData('https://pokeapi.co/api/v2/pokemon?offset=1005&limit=20', true);
         invert.value = true;
+        editPokemonList(true);
     }
     if (value == 3) {
-        await fetchPokemonData('https://pokeapi.co/api/v2/pokemon?offset=0&limit=1025', true, "A-Z");
-        allPokemonList.value = pokemonList.value;
-        pokemonList.value = allPokemonList.value.splice(0, 20);
+        editPokemonList(true, "A-Z");
     }
     if (value == 4) {
-        fetchPokemonData('https://pokeapi.co/api/v2/pokemon?offset=0&limit=1025', true, "Z-A");
-        allPokemonList.value = pokemonList.value;
-        pokemonList.value = allPokemonList.value.splice(0, 20);
+        editPokemonList(true, "Z-A");
     }
 }
 
-const mix = async () => {
-    await fetchPokemonData('https://pokeapi.co/api/v2/pokemon?offset=0&limit=1025', true, "mix");
-    allPokemonList.value = pokemonList.value;
-    pokemonList.value = allPokemonList.value.splice(0, 20);
+const mix = () => {
+    editPokemonList(true, "mix");
 }
 
-const loadMore = async () => {
-    if (next.value == 'add') {
-        pokemonList.value.push(...allPokemonList.value.splice(0, 20));
-        if (allPokemonList.value.length == 0) {
-            next.value = null
-        }
-    }
-    else {
-        if (next.value) {
-            await fetchPokemonData(next.value, false);
-        }
+const loadMore = () => {
+    if (pendingPokemonList.value.length > 0) {
+        pokemonList.value.push(...pendingPokemonList.value.splice(0, 20));
     }
 };
 
-function calculateNextOffset(currentOffset: number, limit: number): number {
-    const newOffset = currentOffset + limit;
-    return newOffset > MAX_POKEMON ? MAX_POKEMON - currentOffset : limit;
-}
 
-onMounted(() => {
-    fetchPokemonData('https://pokeapi.co/api/v2/pokemon', false); // Fetch data for Pokémon ID 1 (Bulbasaur)
+onMounted(async () => {
+    await fetchPokemonData('https://pokeapi.co/api/v2/pokemon?offset=0&limit=1025');
 });
 </script>
 
@@ -139,7 +107,7 @@ onMounted(() => {
         </div>
 
         <div class="flex center">
-            <button class="loadBtn" @click="loadMore" v-if="next">Load more Pokemon</button>
+            <button class="loadBtn" @click="loadMore" v-if="pendingPokemonList.length > 0">Load more Pokemon</button>
         </div>
     </div>
 </template>
