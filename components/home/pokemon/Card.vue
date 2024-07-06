@@ -51,7 +51,8 @@ watch(pokemon, (newPokemon, oldPokemon) => {
 <template>
     <div class="flex col card" tabindex="0">
         <div class="flex center imgContainer">
-            <img class="pokemonImg" :src="imgPokemon" />
+            <img class="pokemonImg"
+                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png" />
         </div>
         <h6 class="number">#{{ number }}</h6>
         <h2 class="name">{{ pokemon.name }}</h2>
