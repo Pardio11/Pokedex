@@ -22,7 +22,7 @@ const fetchPokemonData = async (url: string) => {
 
         allPokemonList.value.push(...data.results);
         pendingPokemonList.value = [...allPokemonList.value];
-        pokemonList.value = pendingPokemonList.value.splice(0, 20);
+        pokemonList.value = pendingPokemonList.value.splice(0, 1025);
     } catch (err) {
         error.value = 'Error fetching data: ' + (err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -50,7 +50,7 @@ const editPokemonList = (reset: boolean, order = "") => {
     if (order === "mix") {
         shuffleArray(pendingPokemonList.value);
     }
-    pokemonList.value = pendingPokemonList.value.splice(0, 20);
+    pokemonList.value = pendingPokemonList.value.splice(0, 1025);
 };
 
 const shuffleArray = (array: any[]) => {
@@ -94,7 +94,7 @@ const search = (searchTerm: String) => {
 }
 const loadMore = () => {
     if (pendingPokemonList.value.length > 0) {
-        pokemonList.value.push(...pendingPokemonList.value.splice(0, 20));
+        pokemonList.value.push(...pendingPokemonList.value.splice(0, 1025));
     }
 };
 
