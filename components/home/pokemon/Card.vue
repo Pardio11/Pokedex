@@ -33,6 +33,7 @@ const number = computed(() => {
 });
 
 const imgPokemon = computed(() => {
+    return pokemonData.value.sprites.front_default
     if (pokemonData.value && pokemonData.value.id) {
         return "https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/detail/" + String(pokemonData.value.id).padStart(3, '0') + ".png";
     }
@@ -51,8 +52,7 @@ watch(pokemon, (newPokemon, oldPokemon) => {
 <template>
     <div class="flex col card" tabindex="0">
         <div class="flex center imgContainer">
-            <img class="pokemonImg"
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png" />
+            <img class="pokemonImg" :src="imgPokemon" />
         </div>
         <h6 class="number">#{{ number }}</h6>
         <h2 class="name">{{ pokemon.name }}</h2>
