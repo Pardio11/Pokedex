@@ -73,11 +73,13 @@ onBeforeUnmount(() => {
 <style scoped>
 .filter {
     margin-top: 2.8rem;
+    align-items: center;
 }
 
 .refreshBtn {
     align-items: center;
     gap: 1rem;
+    height: fit-content;
     padding: 0.7rem 5rem;
     width: fit-content;
     color: white;
@@ -166,5 +168,55 @@ onBeforeUnmount(() => {
 
 .select-option:hover {
     background-color: #313131;
+}
+
+@media (max-width: 978px) {
+    .sort {
+        flex-direction: column;
+        gap: 0.2rem;
+        align-items: start;
+    }
+
+    .filter {
+        align-items: end;
+    }
+
+    .refreshBtn {
+
+        padding: 0.7rem 2rem;
+
+    }
+
+}
+
+@media (max-width: 678px) {
+    .filter {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .refreshBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .sort {
+        flex-direction: row;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .greenBox {
+        width: 100%;
+    }
+}
+
+@media (max-width: 568px) {
+    .sort {
+        flex-direction: column;
+        gap: 0.2rem;
+        align-items: start;
+    }
 }
 </style>

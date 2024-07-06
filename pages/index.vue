@@ -132,7 +132,7 @@ onMounted(async () => {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-
+    justify-items: center;
     gap: 10px;
     margin-top: 1.6rem;
 }
