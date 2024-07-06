@@ -5,6 +5,7 @@ const pokemonList = ref<any | null>([]);
 const allPokemonList = ref<any[]>([]);
 const pendingPokemonList = ref<any[]>([]);
 const isLoading = ref(false);
+const sortValue = ref(1);
 const invert = ref<boolean>(false);
 const error = ref<string | null>(null);
 
@@ -30,7 +31,6 @@ const fetchPokemonData = async (url: string) => {
 };
 
 const editPokemonList = (reset: boolean, order = "") => {
-    console.log(allPokemonList.value)
     if (reset) {
         pendingPokemonList.value = [...allPokemonList.value];
         pokemonList.value = [];
@@ -60,21 +60,21 @@ const shuffleArray = (array: any[]) => {
     }
 };
 
-const sort = (value: number) => {
-    console.log(value);
+const sort = (value: number, reset = true) => {
+    sortValue.value = value;
     if (value == 1) {
         invert.value = false;
-        editPokemonList(true);
+        editPokemonList(reset);
     }
     if (value == 2) {
         invert.value = true;
-        editPokemonList(true);
+        editPokemonList(reset);
     }
     if (value == 3) {
-        editPokemonList(true, "A-Z");
+        editPokemonList(reset, "A-Z");
     }
     if (value == 4) {
-        editPokemonList(true, "Z-A");
+        editPokemonList(reset, "Z-A");
     }
 }
 
@@ -82,6 +82,16 @@ const mix = () => {
     editPokemonList(true, "mix");
 }
 
+const search = (searchTerm: String) => {
+    if (searchTerm.trim() != '') {
+        pendingPokemonList.value = [...allPokemonList.value];
+        const filteredPokemon = pendingPokemonList.value.filter((pokemon: any) =>
+            pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        pendingPokemonList.value = filteredPokemon;
+        sort(sortValue.value, false);
+    }
+}
 const loadMore = () => {
     if (pendingPokemonList.value.length > 0) {
         pokemonList.value.push(...pendingPokemonList.value.splice(0, 20));
@@ -95,7 +105,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <HomeSearch />
+    <HomeSearch @callSearch="search" />
     <HomeAdvance />
     <div class="bottom flex col">
         <HomeFilter @callSort="sort" @callMix="mix" />

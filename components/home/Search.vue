@@ -1,5 +1,16 @@
-<script setup>
+<script setup lang="ts">
+import { ref, defineEmits } from 'vue';
 
+const emit = defineEmits<{
+    (e: 'callSearch', searchTerm: string): void;
+}>();
+
+const searchTerm = ref('');
+
+const emitSearch = () => {
+    // Emit the 'search' event with the searchTerm value
+    emit('callSearch', searchTerm.value);
+}
 </script>
 
 <template>
@@ -9,9 +20,10 @@
                 Name or Number
             </label>
             <div class="flex searchBar">
-                <input type="text">
-                <button class="flex center">
-                    <NuxtImg class="searchImg" src="/icons/search.png" alt="search" />
+                <input type="text" v-model="searchTerm">
+                <button class="flex center" @click="emitSearch">
+                    <!-- Replace with your search icon -->
+                    <img class="searchImg" src="/icons/search.png" alt="search" />
                 </button>
             </div>
             <p>Use the Advanced Search to explore Pokemon by type,
@@ -25,8 +37,6 @@
         </div>
     </div>
 </template>
-
-
 
 <style scoped>
 .top {
