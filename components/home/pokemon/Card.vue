@@ -18,7 +18,7 @@ const fetchPokemonData = async () => {
         const data = await response.json();
         pokemonData.value = data;
         pokemonTypes.value = data.types;
-        console.log(pokemonData.value.sprites.front_default)
+        console.log(pokemonData.value.sprites.other['official-artwork'].front_default)
     } catch (err) {
         error.value = 'Error fetching data: ' + (err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -32,12 +32,16 @@ const number = computed(() => {
     }
     return '';
 });
-
+const id = computed(() => {
+    if (pokemonData.value && pokemonData.value.id) {
+        return String(pokemonData.value.id);
+    }
+    return '';
+});
 const imgPokemon = computed(() => {
 
     if (pokemonData.value && pokemonData.value.id) {
-        return pokemonData.value.sprites.front_default
-        return "https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/detail/" + String(pokemonData.value.id).padStart(3, '0') + ".png";
+        return pokemonData.value.sprites.other['official-artwork'].front_default
     }
     return '';
 });
@@ -53,18 +57,25 @@ watch(pokemon, (newPokemon, oldPokemon) => {
 
 <template>
     <div class="flex col card" tabindex="0">
-        <div class="flex center imgContainer">
-            <img class="pokemonImg" :src="imgPokemon" />
-        </div>
-        <h6 class="number">#{{ number }}</h6>
-        <h2 class="name">{{ pokemon.name }}</h2>
-        <div class="flex types">
-            <HomePokemonTags v-for="typePower in pokemonTypes" :typePower="typePower.type.name" />
-        </div>
+        <NuxtLink :to="`/pokemon/${id}`">
+            <div class="flex center imgContainer">
+                <img class="pokemonImg" :src="imgPokemon" />
+            </div>
+            <h6 class="number">#{{ number }}</h6>
+            <h2 class="name">{{ pokemon.name }}</h2>
+            <div class="flex types">
+                <HomePokemonTags v-for="typePower in pokemonTypes" :typePower="typePower.type.name" :big="false" />
+            </div>
+        </NuxtLink>
     </div>
 </template>
 
 <style scoped>
+a {
+    text-decoration: none;
+    color: black;
+}
+
 .card {
     height: fit-content;
     width: fit-content;

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
-const props = defineProps(['typePower']);
+const props = defineProps(['typePower', 'big']);
 const type = computed(() => props.typePower);
+const size = computed(() => {
+    return props.big ? 'big' : 'tag';
+});
 
 const typeToColorMap = computed(() => {
     const typePower = props.typePower;
@@ -51,7 +54,7 @@ const typeToColorMap = computed(() => {
 </script>
 
 <template>
-    <div class="flex center tag" :style="typeToColorMap">
+    <div class="flex center " :style="typeToColorMap" :class="size">
         <h6>{{ type }}</h6>
     </div>
 </template>
@@ -67,6 +70,19 @@ const typeToColorMap = computed(() => {
 .tag h6 {
     font-weight: 400;
     font-size: smaller;
+    text-transform: capitalize;
+}
+
+.big {
+
+    width: 7rem;
+    padding: 0.2rem 0;
+    border-radius: 0.2rem;
+}
+
+.big h6 {
+    font-weight: 400;
+    font-size: medium;
     text-transform: capitalize;
 }
 </style>
