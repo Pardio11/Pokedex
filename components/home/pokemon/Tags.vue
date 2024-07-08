@@ -68,6 +68,7 @@ const typeToColorMap = computed(() => {
 }
 
 .tag h6 {
+    color: black;
     font-weight: 400;
     font-size: smaller;
     text-transform: capitalize;

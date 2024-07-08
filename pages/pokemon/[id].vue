@@ -20,7 +20,7 @@ const pokemonAbilities = ref<[]>([]);
 const pokemonCategory = ref<string>('');
 const pokemonBack = ref<string>('');
 const pokemonFront = ref<string>('');
-
+const pokemonChain = ref<any>(null);
 const selectedVersion = ref<'red' | 'blue'>('red'); // Default to 'red' version
 
 const pokemonDescription = computed(() => {
@@ -57,9 +57,9 @@ const fetchPokemonData = async () => {
 
 const fetchNextPokemonData = async () => {
     if (Number(route.params.id) == 1025)
-        idNext.value = 1;
+        idNext.value = "1";
     else
-        idNext.value = Number(route.params.id) + 1;
+        idNext.value = String(Number(route.params.id) + 1);
     console.log(idNext.value);
     try {
         const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + idNext.value);
@@ -75,9 +75,9 @@ const fetchNextPokemonData = async () => {
 
 const fetchPrevPokemonData = async () => {
     if (Number(route.params.id) == 1)
-        idPrev.value = 1025;
+        idPrev.value = "1025";
     else
-        idPrev.value = Number(route.params.id) - 1;
+        idPrev.value = String(Number(route.params.id) - 1);
 
     try {
         const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + idPrev.value);
@@ -100,13 +100,35 @@ const fetchPokemonDescription = async () => {
         const data = await response.json();
         pokemonDescriptionRed.value = data.flavor_text_entries[11].flavor_text;
         pokemonDescriptionBlue.value = data.flavor_text_entries[9].flavor_text;
-        pokemonCategory.value = data.genera[7].genus.replace('Pokémon', '').trim();;
+        pokemonCategory.value = data.genera[7].genus.replace('Pokémon', '').trim();
+        const chainUrl = data.evolution_chain.url;
+
+        const response2 = await fetch(chainUrl);
+        if (!response2.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data2 = await response2.json();
+        pokemonChain.value = data2.chain;
     } catch (err) {
         error.value = 'Error fetching data: ' + (err instanceof Error ? err.message : 'Unknown error');
     } finally {
         isLoading.value = false;
     }
 };
+
+const fetchNextPokemonEvolucion = async () => {
+    try {
+        const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + route.params.id);
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        nextPokemonName.value = data.name;
+    } catch (err) {
+        error.value = 'Error fetching data: ' + (err instanceof Error ? err.message : 'Unknown error');
+    }
+};
+
 const imgPokemon = computed(() => {
 
     if (pokemonData.value && pokemonData.value.id) {
@@ -180,6 +202,11 @@ onMounted(() => {
 
             </div>
         </div>
+        <div class="evo flex center">
+            <HomePokemonEvolucionCard v-if="pokemonChain" :chain="pokemonChain" />
+        </div>
+        <ToHome class="mb" />
+
     </div>
 </template>
 
@@ -188,6 +215,8 @@ onMounted(() => {
     background-image: url(/container_bg.png);
     background-position: center;
     background-repeat: repeat;
+    overflow: hidden;
+    max-width: 100vw;
 }
 
 .arrows {
@@ -305,10 +334,17 @@ onMounted(() => {
 
 .angles img {
     width: 8rem;
-    margin: -1.6rem;
+    margin: -0.8rem;
 }
 
-@media (max-width: 978px) {}
+.evo {
+    max-width: 54rem;
+    width: 100%;
+}
+
+.mb {
+    margin-bottom: 2rem;
+}
 
 @media (max-width: 678px) {
     .allInfo {
@@ -324,7 +360,11 @@ onMounted(() => {
     .statsImg {
         width: 100%;
     }
-}
 
-@media (max-width: 568px) {}
+    .name h1 {
+        font-weight: 500;
+        font-size: 1.8em;
+
+    }
+}
 </style>

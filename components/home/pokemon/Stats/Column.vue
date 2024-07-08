@@ -40,7 +40,7 @@ for (let index = 15; index >= 1; index--) {
 .column p {
     margin: 0;
     font-size: small;
-    font-weight: 500;
+    font-weight: 400;
     text-transform: capitalize;
 }
 
@@ -54,5 +54,15 @@ for (let index = 15; index >= 1; index--) {
     background-color: #30A7D7;
     width: 100%;
     height: 0.5rem;
+}
+
+@media (max-width: 678px) {
+    .column p {
+        margin: 0;
+        font-size: x-small;
+        font-weight: 500;
+        text-transform: capitalize;
+    }
+
 }
 </style>

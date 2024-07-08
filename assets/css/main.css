@@ -23,6 +23,9 @@ h6,
 p {
 	margin: 0;
 }
+a {
+	text-decoration: none;
+}
 .red {
 	border: solid red 1px;
 }

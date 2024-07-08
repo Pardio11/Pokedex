@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
 const props = defineProps(["stats"]);
 </script>
 <template>
@@ -15,9 +13,9 @@ const props = defineProps(["stats"]);
 
 <style scoped>
 .container {
-    background-color: #9A9A9A;
+    background-color: #a6a6a6;
     border-radius: 0.4rem;
-    padding: 0.6rem 2rem;
+    padding: 0.6rem 1rem;
     gap: 0.4rem;
 }
 
@@ -28,7 +26,7 @@ const props = defineProps(["stats"]);
 }
 
 .bars {
-    gap: 0.35rem;
+    gap: 0.3rem;
     width: 100%;
 }
 </style>

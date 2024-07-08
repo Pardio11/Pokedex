@@ -21,10 +21,6 @@ const numberZeros = computed(() => {
 
 
 <style scoped>
-a {
-    text-decoration: none;
-}
-
 .next {
     position: relative;
     width: 100%;
@@ -59,5 +55,22 @@ a {
     position: absolute;
     height: 52px;
     width: 75px
+}
+
+@media (max-width: 678px) {
+    .next h3 {
+        font-size: medium;
+        font-weight: 600;
+    }
+
+    .next {
+        gap: 0.4rem;
+    }
+
+    .next img {
+        width: 1.4rem;
+        margin-right: 0.6rem;
+    }
+
 }
 </style>
